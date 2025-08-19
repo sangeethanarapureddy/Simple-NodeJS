@@ -44,12 +44,23 @@ stage('Install & Test') {
 
     stage('Package') {
       steps {
-        sh '''
-          rm -f app.tar.gz
-          tar -czf app.tar.gz * .[^.]*
-          ls -lh app.tar.gz
-        '''
-        archiveArtifacts artifacts: 'app.tar.gz', onlyIfSuccessful: true
+         sh '''
+                    # Remove old package if exists
+                    rm -f app.tar.gz
+                    
+                    # Create package excluding unnecessary files
+                    tar -czf app.tar.gz \
+                        --exclude='app.tar.gz' \
+                        --exclude='.*' \
+                        --exclude='node_modules/.cache' \
+                        Jenkinsfile \
+                        README.md \
+                        index.js \
+                        node_modules \
+                        package-lock.json \
+                        package.json \
+                        views
+                '''
       }
     }
 
